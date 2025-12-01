@@ -1,0 +1,1 @@
+ALTER TABLE `resumes` ADD `status` text DEFAULT 'draft' NOT NULL;
