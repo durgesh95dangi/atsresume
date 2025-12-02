@@ -4,6 +4,8 @@ import { decrypt } from '@/lib/auth';
 
 export async function middleware(request: NextRequest) {
     const session = request.cookies.get('session')?.value;
+    console.log('Middleware: Checking request for', request.nextUrl.pathname);
+    console.log('Middleware: Session cookie present:', !!session);
 
     // Define protected routes
     const protectedRoutes = ['/dashboard', '/settings'];
@@ -13,6 +15,7 @@ export async function middleware(request: NextRequest) {
 
     if (isProtectedRoute) {
         if (!session) {
+            console.log('Middleware: No session, redirecting to sign-in');
             return NextResponse.redirect(new URL('/auth/sign-in', request.url));
         }
 
@@ -21,6 +24,7 @@ export async function middleware(request: NextRequest) {
             await decrypt(session);
         } catch (error) {
             // Invalid session
+            console.error('Middleware: Session verification failed', error);
             return NextResponse.redirect(new URL('/auth/sign-in', request.url));
         }
     }
